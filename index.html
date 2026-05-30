@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>แบ่งทิป 4 รอบ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&family=Prompt:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root {
+    --bg: #f8fafc; --surface: #ffffff; --border: #e2e8f0;
+    --text: #1e293b; --muted: #64748b; --subtle: #f1f5f9;
+    --indigo: #4f46e5; --indigo-light: #eef2ff;
+    --emerald: #059669; --emerald-light: #ecfdf5;
+    --blue: #2563eb; --blue-light: #eff6ff;
+    --purple: #7c3aed; --purple-light: #f5f3ff;
+    --orange: #ea580c; --orange-light: #fff7ed;
+    --red: #dc2626; --red-light: #fef2f2;
+    --radius: 16px; --radius-sm: 10px;
+    --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+  }
+  .dark {
+    --bg: #0f172a; --surface: #1e293b; --border: #334155;
+    --text: #f1f5f9; --muted: #94a3b8; --subtle: #1e293b;
+    --indigo-light: #1e1b4b; --emerald-light: #022c22;
+    --blue-light: #172554; --purple-light: #2e1065; --orange-light: #431407;
+    --red-light: #450a0a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { font-size: 16px; }
+  body {
+    font-family: 'Sarabun', sans-serif;
+    background: var(--bg); color: var(--text);
+    min-height: 100vh; min-height: 100dvh;
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+    transition: background .25s, color .25s;
+  }
+  h1,h2,h3,button,.label-bold { font-family: 'Prompt', sans-serif; }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+    box-shadow: var(--shadow);
+  }
+  .header-left { display: flex; align-items: center; gap: 10px; }
+  .header-icon {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: var(--indigo); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .header h1 { font-size: 16px; font-weight: 700; line-height: 1.2; }
+  .header p { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .header-actions { display: flex; gap: 8px; }
+  .icon-btn {
+    width: 38px; height: 38px; border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--subtle); color: var(--text);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; cursor: pointer; transition: opacity .15s;
+  }
+  .icon-btn:active { opacity: .6; }
+
+  /* ── LANG TOGGLE ── */
+  .lang-toggle {
+    display: flex; background: var(--subtle);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 3px; gap: 2px;
+  }
+  .lang-btn {
+    padding: 5px 10px; border-radius: 7px; border: none;
+    font-size: 11px; font-weight: 600; cursor: pointer;
+    background: transparent; color: var(--muted);
+    transition: all .15s;
+  }
+  .lang-btn.active { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+
+  /* ── ALERT ── */
+  #alert-box {
+    display: none; margin: 12px 16px 0;
+    padding: 12px 14px;
+    background: var(--red-light); border-left: 4px solid var(--red);
+    border-radius: var(--radius-sm); font-size: 13px; color: var(--red);
+    animation: pulse 2s infinite;
+  }
+  #alert-box.show { display: flex; gap: 10px; align-items: flex-start; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.8} }
+  #alert-box i { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  #alert-box strong { display: block; margin-bottom: 2px; font-size: 13px; }
+  #alert-box span { font-size: 12px; line-height: 1.4; }
+
+  /* ── TAB BAR ── */
+  .tab-bar {
+    display: flex; background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px; gap: 0; overflow-x: auto;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .tab-bar::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    padding: 12px 14px; border: none; background: none;
+    font-size: 13px; font-weight: 600; color: var(--muted);
+    cursor: pointer; white-space: nowrap;
+    border-bottom: 2.5px solid transparent;
+    transition: all .2s; flex-shrink: 0;
+  }
+  .tab-btn.active { color: var(--indigo); border-bottom-color: var(--indigo); }
+  .tab-pane { display: none; padding: 16px; }
+  .tab-pane.active { display: block; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+  }
+  .card-title {
+    font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 14px; color: var(--text);
+  }
+  .card-title i { color: var(--indigo); font-size: 15px; }
+
+  /* ── STAFF ROW ── */
+  .staff-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px; border-radius: var(--radius-sm);
+    background: var(--subtle); margin-bottom: 8px;
+    border: 1px solid var(--border);
+  }
+  .staff-row:last-child { margin-bottom: 0; }
+  .staff-info { display: flex; flex-direction: column; gap: 2px; }
+  .staff-name { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+  .staff-hrs { font-size: 11px; color: var(--muted); }
+  .staff-counter {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 4px 6px;
+  }
+  .counter-btn {
+    width: 36px; height: 36px; border-radius: 8px;
+    border: none; background: var(--subtle);
+    color: var(--text); font-size: 18px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: opacity .15s; touch-action: manipulation;
+  }
+  .counter-btn:active { opacity: .5; }
+  .counter-num {
+    width: 36px; text-align: center; font-size: 18px; font-weight: 700;
+    background: none; border: none; color: var(--text);
+    font-family: 'Prompt', sans-serif;
+  }
+  .counter-num:focus { outline: none; }
+  .lock-btn {
+    padding: 4px 6px; border: none; background: none;
+    cursor: pointer; color: var(--muted); font-size: 13px;
+    transition: color .15s;
+  }
+  .lock-btn.locked { color: var(--red); }
+
+  /* ── CASH INPUTS ── */
+  .cash-input-group {
+    margin-bottom: 14px; padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .cash-input-group:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .cash-label {
+    font-size: 12px; font-weight: 600;
+    color: var(--muted); margin-bottom: 6px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .cash-label .dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .cash-input-wrap { position: relative; }
+  .cash-input-wrap span {
+    position: absolute; left: 12px; top: 50%;
+    transform: translateY(-50%); color: var(--muted); font-size: 16px;
+  }
+  .cash-input {
+    width: 100%; padding: 13px 14px 13px 32px;
+    background: var(--subtle); border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); font-size: 18px; font-weight: 700;
+    color: var(--text); font-family: 'Prompt', sans-serif;
+    -webkit-appearance: none; appearance: none;
+    transition: border-color .15s;
+  }
+  .cash-input:focus { outline: none; border-color: var(--indigo); }
+  .cash-input::placeholder { font-size: 15px; font-weight: 400; color: var(--muted); opacity: .6; }
+  .cash-hint { font-size: 11px; color: var(--muted); margin-top: 5px; line-height: 1.4; }
+  /* hide number input spinners */
+  .cash-input::-webkit-outer-spin-button,
+  .cash-input::-webkit-inner-spin-button,
+  .counter-num::-webkit-outer-spin-button,
+  .counter-num::-webkit-inner-spin-button { -webkit-appearance: none; }
+  .cash-input[type=number], .counter-num[type=number] { -moz-appearance: textfield; }
+
+  /* ── RESULT CARDS ── */
+  .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .result-card {
+    border-radius: var(--radius); padding: 14px 12px;
+    border: 1.5px solid; display: flex; flex-direction: column; gap: 8px;
+  }
+  .result-card-header { font-size: 11px; font-weight: 700; letter-spacing: .3px; }
+  .result-card-pax { font-size: 11px; }
+  .result-card-amount { font-size: 26px; font-weight: 800; font-family: 'Prompt', sans-serif; line-height: 1; }
+  .result-card-total { font-size: 11px; padding-top: 6px; border-top: 1px solid; display: flex; justify-content: space-between; }
+  .result-card.morning { background: var(--emerald-light); border-color: #6ee7b7; color: var(--emerald); }
+  .result-card.morning .result-card-total { border-color: #6ee7b7; color: #047857; }
+  .result-card.midday { background: var(--blue-light); border-color: #93c5fd; color: var(--blue); }
+  .result-card.midday .result-card-total { border-color: #93c5fd; color: #1d4ed8; }
+  .result-card.night { background: var(--purple-light); border-color: #c4b5fd; color: var(--purple); }
+  .result-card.night .result-card-total { border-color: #c4b5fd; color: #6d28d9; }
+  .result-card.parttime { background: var(--orange-light); border-color: #fdba74; color: var(--orange); }
+  .result-card.parttime .result-card-total { border-color: #fdba74; color: #c2410c; }
+  .result-card-pax { opacity: .75; }
+
+  /* ── SUMMARY ROW ── */
+  .summary-row {
+    display: flex; justify-content: space-between;
+    background: var(--subtle); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 12px 14px;
+    font-size: 13px; margin-bottom: 8px;
+  }
+  .summary-row:last-child { margin-bottom: 0; }
+  .summary-val { font-weight: 700; font-size: 16px; font-family: 'Prompt', sans-serif; }
+
+  /* ── BUTTONS ── */
+  .btn-row { display: flex; gap: 10px; margin-top: 14px; }
+  .btn {
+    flex: 1; padding: 14px; border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    border: none; transition: opacity .15s; touch-action: manipulation;
+    font-family: 'Prompt', sans-serif;
+  }
+  .btn:active { opacity: .7; }
+  .btn-outline { background: var(--subtle); color: var(--muted); border: 1.5px solid var(--border); }
+  .btn-primary { background: var(--indigo); color: white; }
+  .btn-danger { background: var(--red); color: white; }
+
+  /* ── HISTORY TABLE ── */
+  .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .history-header h3 { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .history-header h3 i { color: var(--indigo); }
+  .clear-hist-btn { font-size: 12px; font-weight: 600; color: var(--red); background: none; border: none; cursor: pointer; padding: 6px; }
+  .history-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--radius-sm); border: 1px solid var(--border); }
+  .history-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .history-table th { padding: 10px 10px; background: var(--subtle); color: var(--muted); font-weight: 700; text-align: left; white-space: nowrap; }
+  .history-table th:first-child { border-radius: var(--radius-sm) 0 0 0; }
+  .history-table th:last-child { border-radius: 0 var(--radius-sm) 0 0; }
+  .history-table td { padding: 10px 10px; border-top: 1px solid var(--border); white-space: nowrap; }
+  .history-empty { text-align: center; padding: 32px 16px; color: var(--muted); font-size: 13px; }
+
+  /* ── THEORY CARDS ── */
+  .theory-desc { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
+  .theory-step {
+    display: flex; gap: 10px; padding: 11px 12px;
+    background: var(--subtle); border-radius: var(--radius-sm);
+    border: 1px solid var(--border); margin-bottom: 8px;
+  }
+  .theory-step:last-child { margin-bottom: 0; }
+  .step-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--border); color: var(--text);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+  }
+  .step-title { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
+  .step-desc { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.5); backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px; z-index: 100;
+    opacity: 0; pointer-events: none; transition: opacity .2s;
+  }
+  .modal-overlay.show { opacity: 1; pointer-events: all; }
+  .modal-box {
+    background: var(--surface); border-radius: var(--radius);
+    padding: 20px; width: 100%; max-width: 360px;
+    border: 1px solid var(--border); box-shadow: 0 20px 40px rgba(0,0,0,.3);
+    transform: scale(.94); transition: transform .2s;
+  }
+  .modal-overlay.show .modal-box { transform: scale(1); }
+  .modal-icon { display: flex; align-items: center; gap: 10px; color: var(--red); margin-bottom: 12px; }
+  .modal-icon-wrap { width: 40px; height: 40px; border-radius: 10px; background: var(--red-light); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .modal-title { font-size: 16px; font-weight: 700; }
+  .modal-desc { font-size: 13px; color: var(--muted); margin-bottom: 18px; line-height: 1.5; }
+  .modal-btns { display: flex; gap: 10px; }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: #1e293b; color: white; padding: 12px 18px;
+    border-radius: 100px; font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.3);
+    z-index: 200; transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .3s;
+    opacity: 0; white-space: nowrap;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  #toast i { color: #4ade80; }
+
+  /* ── DARK MODE specific overrides ── */
+  .dark .result-card.morning { color: #34d399; }
+  .dark .result-card.morning .result-card-total { color: #6ee7b7; }
+  .dark .result-card.midday { color: #60a5fa; }
+  .dark .result-card.midday .result-card-total { color: #93c5fd; }
+  .dark .result-card.night { color: #a78bfa; }
+  .dark .result-card.night .result-card-total { color: #c4b5fd; }
+  .dark .result-card.parttime { color: #fb923c; }
+  .dark .result-card.parttime .result-card-total { color: #fdba74; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div class="header-icon"><i class="fa-solid fa-coins"></i></div>
+    <div>
+      <h1 data-i18n="main-title">แบ่งทิป 4 รอบ</h1>
+      <p data-i18n="main-subtitle">คำนวณตามชั่วโมงทำงานจริง ไร้ทศนิยม</p>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="icon-btn" onclick="toggleDark()" id="dark-btn" title="สลับธีม">
+      <i class="fa-solid fa-moon" id="dark-icon"></i>
+    </button>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="lang-th" onclick="setLang('th')">ไทย</button>
+      <button class="lang-btn" id="lang-en" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</header>
+
+<!-- ALERT -->
+<div id="alert-box">
+  <i class="fa-solid fa-triangle-exclamation"></i>
+  <div>
+    <strong id="alert-title">คำเตือน</strong>
+    <span id="alert-desc"></span>
+  </div>
+</div>
+
+<!-- TABS -->
+<nav class="tab-bar">
+  <button class="tab-btn active" onclick="showTab('tab-staff')" id="btn-tab-staff" data-i18n="tab-staff">👥 จำนวนคน</button>
+  <button class="tab-btn" onclick="showTab('tab-cash')" id="btn-tab-cash" data-i18n="tab-cash">💰 ยอดเงิน</button>
+  <button class="tab-btn" onclick="showTab('tab-result')" id="btn-tab-result" data-i18n="tab-result">📊 ผลการแบ่ง</button>
+  <button class="tab-btn" onclick="showTab('tab-history')" id="btn-tab-history" data-i18n="tab-history">📋 ประวัติ</button>
+  <button class="tab-btn" onclick="showTab('tab-theory')" id="btn-tab-theory" data-i18n="tab-theory">❓ วิธีคิด</button>
+</nav>
+
+<!-- TAB: STAFF -->
+<div class="tab-pane active" id="tab-staff">
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-user-gear"></i><span data-i18n="title-staff-setup">ตั้งค่าจำนวนคนเข้างาน</span></div>
+
+    <!-- Morning -->
+    <div class="staff-row">
+      <div class="staff-info">
+        <div class="staff-name">
+          🌅 <span data-i18n="shift-morning">กะเช้า (07:30–16:30)</span>
+          <button class="lock-btn" id="lock-btn-m" onclick="toggleLock('m')" title="ล็อก">
+            <i class="fa-solid fa-lock-open" id="lock-icon-m"></i>
+          </button>
+        </div>
+        <div class="staff-hrs" data-i18n="hrs-9">9 ชม./คน</div>
+      </div>
+      <div class="staff-counter">
+        <button class="counter-btn" id="btn-sub-m" onclick="changeCount('m',-1)">−</button>
+        <input type="number" class="counter-num" id="staff-m" value="4" min="0" inputmode="numeric" oninput="onStaffInput()">
+        <button class="counter-btn" id="btn-add-m" onclick="changeCount('m',1)">+</button>
+      </div>
+    </div>
+
+    <!-- Midday -->
+    <div class="staff-row">
+      <div class="staff-info">
+        <div class="staff-name">
+          ☀️ <span data-i18n="shift-midday">กะกลางวัน (09:00–18:00)</span>
+          <button class="lock-btn" id="lock-btn-mid" onclick="toggleLock('mid')" title="ล็อก">
+            <i class="fa-solid fa-lock-open" id="lock-icon-mid"></i>
+          </button>
+        </div>
+        <div class="staff-hrs" data-i18n="hrs-9">9 ชม./คน</div>
+      </div>
+      <div class="staff-counter">
+        <button class="counter-btn" id="btn-sub-mid" onclick="changeCount('mid',-1)">−</button>
+        <input type="number" class="counter-num" id="staff-mid" value="2" min="0" inputmode="numeric" oninput="onStaffInput()">
+        <button class="counter-btn" id="btn-add-mid" onclick="changeCount('mid',1)">+</button>
+      </div>
+    </div>
+
+    <!-- Night -->
+    <div class="staff-row">
+      <div class="staff-info">
+        <div class="staff-name">
+          🌃 <span data-i18n="shift-night">กะบ่าย (15:00–00:00)</span>
+          <button class="lock-btn" id="lock-btn-n" onclick="toggleLock('n')" title="ล็อก">
+            <i class="fa-solid fa-lock-open" id="lock-icon-n"></i>
+          </button>
+        </div>
+        <div class="staff-hrs" data-i18n="hrs-9">9 ชม./คน</div>
+      </div>
+      <div class="staff-counter">
+        <button class="counter-btn" id="btn-sub-n" onclick="changeCount('n',-1)">−</button>
+        <input type="number" class="counter-num" id="staff-n" value="3" min="0" inputmode="numeric" oninput="onStaffInput()">
+        <button class="counter-btn" id="btn-add-n" onclick="changeCount('n',1)">+</button>
+      </div>
+    </div>
+
+    <!-- Part-time -->
+    <div class="staff-row">
+      <div class="staff-info">
+        <div class="staff-name">⏱️ <span data-i18n="shift-pt">พาร์ทไทม์ (18:00–00:00)</span></div>
+        <div class="staff-hrs" data-i18n="hrs-6">6 ชม./คน</div>
+      </div>
+      <div class="staff-counter">
+        <button class="counter-btn" id="btn-sub-pt" onclick="changeCount('pt',-1)">−</button>
+        <input type="number" class="counter-num" id="staff-pt" value="0" min="0" inputmode="numeric" oninput="onStaffInput()">
+        <button class="counter-btn" id="btn-add-pt" onclick="changeCount('pt',1)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center; padding: 8px 0;">
+    <button class="btn btn-primary" style="width:100%; max-width:400px;" onclick="showTab('tab-cash')" data-i18n="btn-next-cash">ถัดไป: กรอกยอดเงิน →</button>
+  </div>
+</div>
+
+<!-- TAB: CASH -->
+<div class="tab-pane" id="tab-cash">
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-vault"></i><span data-i18n="title-cash">บันทึกยอดในกล่องทิป</span></div>
+
+    <!-- 15:00 -->
+    <div class="cash-input-group">
+      <div class="cash-label">
+        <span class="dot" style="background:#059669"></span>
+        <span data-i18n="label-1500">1. ยอดในกล่อง เวลา 15:00 น. (บาท)</span>
+      </div>
+      <div class="cash-input-wrap">
+        <span>฿</span>
+        <input type="number" class="cash-input" id="input-1500" placeholder="0" inputmode="decimal" oninput="recalc()">
+      </div>
+      <div class="cash-hint" data-i18n="hint-1500">นับทั้งหมดในกล่องตอน 15:00 น. ก่อนกะบ่ายเริ่มงาน</div>
+    </div>
+
+    <!-- 16:30 -->
+    <div class="cash-input-group">
+      <div class="cash-label">
+        <span class="dot" style="background:#2563eb"></span>
+        <span data-i18n="label-1630">2. ยอดในกล่อง เวลา 16:30 น. (บาท)</span>
+      </div>
+      <div class="cash-input-wrap">
+        <span>฿</span>
+        <input type="number" class="cash-input" id="input-1630" placeholder="0" inputmode="decimal" oninput="recalc()">
+      </div>
+      <div class="cash-hint" data-i18n="hint-1630">นับก่อนจ่ายส่วนแบ่งให้กะเช้ากลับบ้าน</div>
+    </div>
+
+    <!-- 18:00 -->
+    <div class="cash-input-group">
+      <div class="cash-label">
+        <span class="dot" style="background:#7c3aed"></span>
+        <span data-i18n="label-1800">3. ยอดในกล่อง เวลา 18:00 น. (บาท)</span>
+      </div>
+      <div class="cash-input-wrap">
+        <span>฿</span>
+        <input type="number" class="cash-input" id="input-1800" placeholder="0" inputmode="decimal" oninput="recalc()">
+      </div>
+      <div class="cash-hint" data-i18n="hint-1800">นับก่อนจ่ายส่วนแบ่งให้กะกลางวันกลับบ้าน</div>
+    </div>
+
+    <!-- 00:00 -->
+    <div class="cash-input-group">
+      <div class="cash-label">
+        <span class="dot" style="background:#ea580c"></span>
+        <span data-i18n="label-0000">4. ยอดในกล่อง เวลา 00:00 น. (บาท)</span>
+      </div>
+      <div class="cash-input-wrap">
+        <span>฿</span>
+        <input type="number" class="cash-input" id="input-0000" placeholder="0" inputmode="decimal" oninput="recalc()">
+      </div>
+      <div class="cash-hint" data-i18n="hint-0000">นับทั้งหมดก่อนปิดร้านตอนเที่ยงคืน</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="clearCash()" data-i18n="btn-clear">ล้างฟอร์ม</button>
+      <button class="btn btn-primary" onclick="showTab('tab-result')" data-i18n="btn-see-result">ดูผลการแบ่ง</button>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: RESULT -->
+<div class="tab-pane" id="tab-result">
+  <div class="card">
+    <div class="card-title">
+      <i class="fa-solid fa-hand-holding-dollar"></i>
+      <span data-i18n="title-payout">เงินทิปรายคน</span>
+      <span style="margin-left:auto; font-size:11px; padding:3px 8px; border-radius:100px; background:var(--indigo-light); color:var(--indigo); font-weight:600;" data-i18n="clean-badge">ไม่มีเศษ</span>
+    </div>
+
+    <div class="result-grid">
+      <!-- Morning -->
+      <div class="result-card morning">
+        <div class="result-card-header" data-i18n="card-m">🌅 กะเช้า (เลิก 16:30)</div>
+        <div class="result-card-pax" id="cnt-m">ทำงาน: 4 คน</div>
+        <div class="result-card-amount" id="res-m">฿0</div>
+        <div class="result-card-total">
+          <span data-i18n="label-total">รวมกะ:</span>
+          <span id="res-total-m">฿0</span>
+        </div>
+      </div>
+      <!-- Midday -->
+      <div class="result-card midday">
+        <div class="result-card-header" data-i18n="card-mid">☀️ กะกลางวัน (เลิก 18:00)</div>
+        <div class="result-card-pax" id="cnt-mid">ทำงาน: 2 คน</div>
+        <div class="result-card-amount" id="res-mid">฿0</div>
+        <div class="result-card-total">
+          <span data-i18n="label-total">รวมกะ:</span>
+          <span id="res-total-mid">฿0</span>
+        </div>
+      </div>
+      <!-- Night -->
+      <div class="result-card night">
+        <div class="result-card-header" data-i18n="card-n">🌃 กะบ่าย (เลิก 00:00)</div>
+        <div class="result-card-pax" id="cnt-n">ทำงาน: 3 คน</div>
+        <div class="result-card-amount" id="res-n">฿0</div>
+        <div class="result-card-total">
+          <span data-i18n="label-total">รวมกะ:</span>
+          <span id="res-total-n">฿0</span>
+        </div>
+      </div>
+      <!-- Part-time -->
+      <div class="result-card parttime">
+        <div class="result-card-header" data-i18n="card-pt">⏱️ พาร์ทไทม์ (เลิก 00:00)</div>
+        <div class="result-card-pax" id="cnt-pt">ทำงาน: 0 คน</div>
+        <div class="result-card-amount" id="res-pt">฿0</div>
+        <div class="result-card-total">
+          <span data-i18n="label-total">รวมกะ:</span>
+          <span id="res-total-pt">฿0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="summary-row">
+      <span data-i18n="label-total-earned">รวมทิปทั้งวัน:</span>
+      <span class="summary-val" id="stat-total">฿0</span>
+    </div>
+    <div class="summary-row">
+      <span data-i18n="label-leftover">เศษเงินในกล่อง:</span>
+      <span class="summary-val" id="stat-leftover">฿0</span>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="clearCash()" data-i18n="btn-clear">ล้างฟอร์ม</button>
+      <button class="btn btn-primary" onclick="saveToday()" data-i18n="btn-save">บันทึกวันนี้</button>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: HISTORY -->
+<div class="tab-pane" id="tab-history">
+  <div class="card">
+    <div class="history-header">
+      <h3><i class="fa-solid fa-clock-rotate-left"></i><span data-i18n="history-title">ประวัติรายวัน</span></h3>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="clear-hist-btn" id="btn-export-csv" onclick="exportCSV()" style="color:var(--indigo)" data-i18n="btn-export-csv">⬇ Export CSV</button>
+        <button class="clear-hist-btn" onclick="confirmClear()" data-i18n="btn-clear-hist">ล้างประวัติ</button>
+      </div>
+    </div>
+    <div class="history-scroll">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th data-i18n="th-date">วันที่</th>
+            <th data-i18n="th-total">รวมทิป</th>
+            <th data-i18n="th-m">เช้า/คน</th>
+            <th data-i18n="th-mid">กลางวัน/คน</th>
+            <th data-i18n="th-n">บ่าย/คน</th>
+            <th data-i18n="th-pt">PT/คน</th>
+          </tr>
+        </thead>
+        <tbody id="hist-body">
+          <tr><td colspan="6" class="history-empty" data-i18n="history-empty">ยังไม่มีประวัติ</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: THEORY -->
+<div class="tab-pane" id="tab-theory">
+  <div class="card">
+    <div class="card-title"><i class="fa-solid fa-circle-question"></i><span data-i18n="theory-title">วิธีคิดเบื้องหลัง</span></div>
+    <p class="theory-desc" data-i18n="theory-desc">แอปนี้แบ่งทิปตามสัดส่วนชั่วโมงทำงานจริงในแต่ละช่วง (Time-Weighted Interval Model) แบ่งเป็น 4 ช่วงตามจุดที่กะทับซ้อนกัน เพื่อให้ทุกกะได้ส่วนแบ่งที่ยุติธรรม:</p>
+    <div class="theory-step">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-title" data-i18n="t-step-1">ช่วงที่ 1: 07:30–15:00 น.</div>
+        <div class="step-desc" id="explain-1" data-i18n="t-desc-1">ทิปเป็นของกะเช้าและกะกลางวันเท่านั้น (ตามชั่วโมงจริง)</div>
+      </div>
+    </div>
+    <div class="theory-step">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title" data-i18n="t-step-2">ช่วงที่ 2: 15:00–16:30 น.</div>
+        <div class="step-desc" id="explain-2" data-i18n="t-desc-2">ทิปใหม่แบ่งให้ทั้ง 3 กะ: เช้า กลางวัน และบ่าย</div>
+      </div>
+    </div>
+    <div class="theory-step">
+      <div class="step-num">3</div>
+      <div>
+        <div class="step-title" data-i18n="t-step-3">ช่วงที่ 3: 16:30–18:00 น.</div>
+        <div class="step-desc" id="explain-3" data-i18n="t-desc-3">ทิปใหม่แบ่งเฉพาะกะกลางวันและกะบ่าย (กะเช้าเลิกงานแล้ว)</div>
+      </div>
+    </div>
+    <div class="theory-step">
+      <div class="step-num">4</div>
+      <div>
+        <div class="step-title" data-i18n="t-step-4">ช่วงที่ 4: 18:00–00:00 น.</div>
+        <div class="step-desc" id="explain-4" data-i18n="t-desc-4">ทิปที่เหลือเป็นของกะบ่ายและพาร์ทไทม์จนปิดร้าน</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <div class="modal-icon">
+      <div class="modal-icon-wrap"><i class="fa-solid fa-triangle-exclamation"></i></div>
+      <span class="modal-title" data-i18n="modal-title">ยืนยันการลบประวัติ</span>
+    </div>
+    <p class="modal-desc" data-i18n="modal-desc">ต้องการลบประวัติการบันทึกทั้งหมดหรือไม่? ไม่สามารถกู้คืนได้</p>
+    <div class="modal-btns">
+      <button class="btn btn-outline" onclick="closeModal()" data-i18n="btn-cancel">ยกเลิก</button>
+      <button class="btn btn-danger" onclick="doClearHistory()" data-i18n="btn-confirm-delete">ยืนยันลบ</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"><i class="fa-solid fa-circle-check"></i><span id="toast-text">สำเร็จ</span></div>
+
+<script>
+// ── LANGUAGE PACK ──────────────────────────────────────────────────────────
+const L = {
+  th: {
+    "main-title":"แบ่งทิป 4 รอบ","main-subtitle":"คำนวณตามชั่วโมงทำงานจริง ไร้ทศนิยม",
+    "tab-staff":"👥 จำนวนคน","tab-cash":"💰 ยอดเงิน","tab-result":"📊 ผลการแบ่ง",
+    "tab-history":"📋 ประวัติ","tab-theory":"❓ วิธีคิด",
+    "title-staff-setup":"ตั้งค่าจำนวนคนเข้างาน",
+    "shift-morning":"กะเช้า (07:30–16:30)","shift-midday":"กะกลางวัน (09:00–18:00)",
+    "shift-night":"กะบ่าย (15:00–00:00)","shift-pt":"พาร์ทไทม์ (18:00–00:00)",
+    "hrs-9":"9 ชม./คน","hrs-6":"6 ชม./คน",
+    "btn-next-cash":"ถัดไป: กรอกยอดเงิน →",
+    "title-cash":"บันทึกยอดในกล่องทิป",
+    "label-1500":"1. ยอดในกล่อง เวลา 15:00 น. (บาท)",
+    "hint-1500":"นับทั้งหมดในกล่องตอน 15:00 น. ก่อนกะบ่ายเริ่มงาน",
+    "label-1630":"2. ยอดในกล่อง เวลา 16:30 น. (บาท)",
+    "hint-1630":"นับก่อนจ่ายส่วนแบ่งให้กะเช้ากลับบ้าน",
+    "label-1800":"3. ยอดในกล่อง เวลา 18:00 น. (บาท)",
+    "hint-1800":"นับก่อนจ่ายส่วนแบ่งให้กะกลางวันกลับบ้าน",
+    "label-0000":"4. ยอดในกล่อง เวลา 00:00 น. (บาท)",
+    "hint-0000":"นับทั้งหมดก่อนปิดร้านตอนเที่ยงคืน",
+    "btn-clear":"ล้างฟอร์ม","btn-see-result":"ดูผลการแบ่ง","btn-save":"บันทึกวันนี้",
+    "title-payout":"เงินทิปรายคน","clean-badge":"ไม่มีเศษ",
+    "card-m":"🌅 กะเช้า (เลิก 16:30)","card-mid":"☀️ กะกลางวัน (เลิก 18:00)",
+    "card-n":"🌃 กะบ่าย (เลิก 00:00)","card-pt":"⏱️ พาร์ทไทม์ (เลิก 00:00)",
+    "label-total":"รวมกะ:","label-total-earned":"รวมทิปทั้งวัน:","label-leftover":"เศษเงินในกล่อง:",
+    "history-title":"ประวัติรายวัน","btn-clear-hist":"ล้างประวัติ",
+    "th-date":"วันที่","th-total":"รวมทิป","th-m":"เช้า/คน","th-mid":"กลางวัน/คน","th-n":"บ่าย/คน","th-pt":"PT/คน",
+    "history-empty":"ยังไม่มีประวัติ",
+    "theory-title":"วิธีคิดเบื้องหลัง",
+    "theory-desc":"แอปนี้แบ่งทิปตามสัดส่วนชั่วโมงทำงานจริงในแต่ละช่วง (Time-Weighted Interval Model) แบ่งเป็น 4 ช่วงตามจุดที่กะทับซ้อนกัน เพื่อให้ทุกกะได้ส่วนแบ่งที่ยุติธรรม:",
+    "t-step-1":"ช่วงที่ 1: 07:30–15:00 น.","t-step-2":"ช่วงที่ 2: 15:00–16:30 น.",
+    "t-step-3":"ช่วงที่ 3: 16:30–18:00 น.","t-step-4":"ช่วงที่ 4: 18:00–00:00 น.",
+    "t-desc-1":"ทิปเป็นของกะเช้าและกะกลางวันเท่านั้น (ตามชั่วโมงจริง)",
+    "t-desc-2":"ทิปใหม่แบ่งให้ทั้ง 3 กะ: เช้า กลางวัน และบ่าย",
+    "t-desc-3":"ทิปใหม่แบ่งเฉพาะกะกลางวันและกะบ่าย (กะเช้าเลิกงานแล้ว)",
+    "t-desc-4":"ทิปที่เหลือเป็นของกะบ่ายและพาร์ทไทม์จนปิดร้าน",
+    "modal-title":"ยืนยันการลบประวัติ",
+    "modal-desc":"ต้องการลบประวัติการบันทึกทั้งหมดหรือไม่? ไม่สามารถกู้คืนได้",
+    "btn-cancel":"ยกเลิก","btn-confirm-delete":"ยืนยันลบ",
+    "alert-title":"⚠️ ยอดเงินผิดปกติ!",
+    "alert-1630-low":"ยอด 16:30 น. ต่ำกว่ายอด 15:00 น. — กล่องทิปมียอดลดลงผิดปกติ กรุณาตรวจสอบ",
+    "alert-1630-deficit":"ยอดเงิน 16:30 น. ไม่พอกับเงินปันส่วนที่กะเช้าควรได้รับ (ขาดเงินสดในกล่อง)",
+    "alert-1800-low":"ยอดเงิน 18:00 น. ไม่พอกับยอดที่ต้องจ่ายให้กะกลางวัน",
+    "alert-0000-low":"ยอดเงินปิดร้านไม่พอแบ่งให้กะบ่ายและพาร์ทไทม์",
+    "pax":"ทำงาน: {n} คน",
+    "toast-saved":"บันทึกยอดส่วนแบ่งทิปสำเร็จ!","toast-cleared":"ล้างฟอร์มสำเร็จ",
+    "toast-hist-cleared":"ล้างประวัติสำเร็จ","toast-save-error":"กรุณากรอกยอดเงินก่อนบันทึก",
+    "btn-export-csv":"⬇ Export CSV",
+    "toast-exported":"ดาวน์โหลด CSV สำเร็จ!","toast-no-hist":"ยังไม่มีประวัติให้ Export"
+  },
+  en: {
+    "main-title":"4-Stage Tip Splitter","main-subtitle":"Time-weighted, decimal-free",
+    "tab-staff":"👥 Staff","tab-cash":"💰 Cash","tab-result":"📊 Results",
+    "tab-history":"📋 History","tab-theory":"❓ How it works",
+    "title-staff-setup":"Staff Headcount Setup",
+    "shift-morning":"Morning (07:30–16:30)","shift-midday":"Midday (09:00–18:00)",
+    "shift-night":"Afternoon (15:00–00:00)","shift-pt":"Part-Time (18:00–00:00)",
+    "hrs-9":"9 hrs/person","hrs-6":"6 hrs/person",
+    "btn-next-cash":"Next: Enter Cash →",
+    "title-cash":"Tip Box Cash Entry",
+    "label-1500":"1. Box total at 15:00 (Baht)",
+    "hint-1500":"Count all cash in box at 15:00 exactly",
+    "label-1630":"2. Box total at 16:30 (Baht)",
+    "hint-1630":"Count before paying out Morning shift",
+    "label-1800":"3. Box total at 18:00 (Baht)",
+    "hint-1800":"Count before paying out Midday shift",
+    "label-0000":"4. Box total at 00:00 (Baht)",
+    "hint-0000":"Count before closing — final box sweep",
+    "btn-clear":"Clear","btn-see-result":"See Results","btn-save":"Save Today",
+    "title-payout":"Per-Person Payouts","clean-badge":"No decimals",
+    "card-m":"🌅 Morning (ends 16:30)","card-mid":"☀️ Midday (ends 18:00)",
+    "card-n":"🌃 Afternoon (ends 00:00)","card-pt":"⏱️ Part-Time (ends 00:00)",
+    "label-total":"Shift total:","label-total-earned":"Total tips today:","label-leftover":"Change left in box:",
+    "history-title":"Daily Tip Log","btn-clear-hist":"Clear History",
+    "th-date":"Date","th-total":"Total","th-m":"Morning","th-mid":"Midday","th-n":"Afternoon","th-pt":"PT",
+    "history-empty":"No records yet",
+    "theory-title":"How it works",
+    "theory-desc":"Tips are split proportionally by hours worked in each time interval (Time-Weighted Interval Model), split into 4 stages at shift overlap points:",
+    "t-step-1":"Stage 1: 07:30–15:00","t-step-2":"Stage 2: 15:00–16:30",
+    "t-step-3":"Stage 3: 16:30–18:00","t-step-4":"Stage 4: 18:00–00:00",
+    "t-desc-1":"Tips belong to Morning and Midday only (by actual hours worked)",
+    "t-desc-2":"New tips split among all 3 shifts: Morning, Midday, Afternoon",
+    "t-desc-3":"New tips split between Midday and Afternoon (Morning has clocked out)",
+    "t-desc-4":"Remaining tips go to Afternoon and Part-Time until closing",
+    "modal-title":"Confirm Clear History",
+    "modal-desc":"Delete all saved tip records? This cannot be undone.",
+    "btn-cancel":"Cancel","btn-confirm-delete":"Delete All",
+    "alert-title":"⚠️ Cash Discrepancy!",
+    "alert-1630-low":"16:30 box total is LOWER than 15:00 — unexpected decrease, please recount",
+    "alert-1630-deficit":"16:30 cash insufficient to cover Morning shift payout (box deficit)",
+    "alert-1800-low":"18:00 cash too low to cover Midday shift payout",
+    "alert-0000-low":"Closing cash cannot cover Afternoon and Part-Time payouts",
+    "pax":"Working: {n} pax",
+    "toast-saved":"Saved today's tip record!","toast-cleared":"Form cleared",
+    "toast-hist-cleared":"History cleared","toast-save-error":"Please enter cash amounts first",
+    "btn-export-csv":"⬇ Export CSV",
+    "toast-exported":"CSV downloaded!","toast-no-hist":"No history to export yet"
+  }
+};
+
+// ── STATE ──────────────────────────────────────────────────────────────────
+let lang = 'th';
+let locks = { m: false, mid: false, n: false };
+
+// ── LANG ───────────────────────────────────────────────────────────────────
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (L[l][k] !== undefined) el.textContent = L[l][k];
+  });
+  document.getElementById('lang-th').classList.toggle('active', l === 'th');
+  document.getElementById('lang-en').classList.toggle('active', l === 'en');
+  recalc();
+  renderHistory();
+}
+
+// ── DARK MODE ──────────────────────────────────────────────────────────────
+function toggleDark() {
+  const isDark = document.documentElement.classList.toggle('dark');
+  document.getElementById('dark-icon').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+function loadTheme() {
+  const t = localStorage.getItem('theme');
+  const preferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (t === 'dark' || (!t && preferDark)) {
+    document.documentElement.classList.add('dark');
+    document.getElementById('dark-icon').className = 'fa-solid fa-sun';
+  }
+}
+
+// ── TABS ───────────────────────────────────────────────────────────────────
+function showTab(id) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('btn-' + id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ── STAFF ──────────────────────────────────────────────────────────────────
+function getStaff(id) { return Math.max(0, parseInt(document.getElementById('staff-'+id).value) || 0); }
+
+function changeCount(id, delta) {
+  const el = document.getElementById('staff-' + id);
+  if (el.disabled) return;
+  el.value = Math.max(0, (parseInt(el.value) || 0) + delta);
+  onStaffInput();
+}
+
+function onStaffInput() {
+  saveStaff();
+  recalc();
+}
+
+function toggleLock(shift) {
+  locks[shift] = !locks[shift];
+  const locked = locks[shift];
+  const icon = document.getElementById('lock-icon-' + shift);
+  const btn = document.getElementById('lock-btn-' + shift);
+  icon.className = locked ? 'fa-solid fa-lock' : 'fa-solid fa-lock-open';
+  btn.classList.toggle('locked', locked);
+
+  const maps = {
+    m:   ['staff-m',   'btn-sub-m',   'btn-add-m',   'input-1500', 'input-1630'],
+    mid: ['staff-mid', 'btn-sub-mid', 'btn-add-mid', 'input-1800'],
+    n:   ['staff-n',   'btn-sub-n',   'btn-add-n',   'staff-pt', 'btn-sub-pt', 'btn-add-pt', 'input-0000']
+  };
+  maps[shift].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.disabled = locked;
+    if (el.tagName === 'BUTTON') el.style.opacity = locked ? '0.4' : '';
+    if (el.tagName === 'INPUT')  el.style.opacity = locked ? '0.5' : '';
+  });
+}
+
+function saveStaff() {
+  localStorage.setItem('tip_staff', JSON.stringify({
+    m: getStaff('m'), mid: getStaff('mid'), n: getStaff('n'), pt: getStaff('pt')
+  }));
+}
+function loadStaff() {
+  try {
+    const s = JSON.parse(localStorage.getItem('tip_staff'));
+    if (!s) return;
+    if (s.m   !== undefined) document.getElementById('staff-m').value   = s.m;
+    if (s.mid !== undefined) document.getElementById('staff-mid').value = s.mid;
+    if (s.n   !== undefined) document.getElementById('staff-n').value   = s.n;
+    if (s.pt  !== undefined) document.getElementById('staff-pt').value  = s.pt;
+  } catch(e) {}
+}
+
+// ── CASH INPUT HELPERS ─────────────────────────────────────────────────────
+function getCash(id) {
+  const val = document.getElementById('input-' + id).value;
+  return val === '' ? null : Math.max(0, parseFloat(val) || 0);
+}
+function hasCash(id) { return document.getElementById('input-' + id).value.trim() !== ''; }
+
+// ── CORE CALCULATION ───────────────────────────────────────────────────────
+function recalc() {
+  const sM = getStaff('m'), sMid = getStaff('mid'), sN = getStaff('n'), sPT = getStaff('pt');
+
+  // Update pax labels
+  const paxTpl = L[lang]['pax'];
+  document.getElementById('cnt-m').textContent   = paxTpl.replace('{n}', sM);
+  document.getElementById('cnt-mid').textContent = paxTpl.replace('{n}', sMid);
+  document.getElementById('cnt-n').textContent   = paxTpl.replace('{n}', sN);
+  document.getElementById('cnt-pt').textContent  = paxTpl.replace('{n}', sPT);
+
+  // Update theory descriptions
+  const d = L[lang];
+  document.getElementById('explain-1').textContent = lang === 'th'
+    ? `ทิปสะสมตั้งแต่เปิดร้านแบ่งให้กะเช้า (${sM} คน) และกะกลางวัน (${sMid} คน) ตามชั่วโมงจริง`
+    : `Accrued tips split between Morning (${sM} pax) & Midday (${sMid} pax) by hours worked.`;
+  document.getElementById('explain-2').textContent = lang === 'th'
+    ? `ทิปใหม่ช่วง 15:00–16:30 แบ่งให้กะเช้า (${sM} คน), กลางวัน (${sMid} คน) และบ่าย (${sN} คน)`
+    : `New tips split among Morning (${sM}), Midday (${sMid}), Afternoon (${sN}).`;
+  document.getElementById('explain-3').textContent = lang === 'th'
+    ? `ทิปใหม่ช่วง 16:30–18:00 แบ่งเฉพาะกลางวัน (${sMid} คน) และบ่าย (${sN} คน)`
+    : `New tips split between Midday (${sMid}) and Afternoon (${sN}).`;
+  document.getElementById('explain-4').textContent = lang === 'th'
+    ? `ทิปใหม่ช่วง 18:00–00:00 แบ่งให้กะบ่าย (${sN} คน) และพาร์ทไทม์ (${sPT} คน)`
+    : `New tips split between Afternoon (${sN}) and Part-Time (${sPT}).`;
+
+  // Read cash values
+  const c1500 = getCash('1500'), c1630 = getCash('1630');
+  const c1800 = getCash('1800'), c0000 = getCash('0000');
+  const h1500 = hasCash('1500'), h1630 = hasCash('1630');
+  const h1800 = hasCash('1800'), h0000 = hasCash('0000');
+
+  // Reset alert
+  hideAlert();
+
+  // Virtual purses (fractional baht accumulated per person)
+  let pM = 0, pMid = 0, pN = 0, pPT = 0;
+
+  // ── INTERVAL 1: 07:30–15:00 (M=7.5h, Mid=6h) ──
+  const E1 = h1500 ? c1500 : 0;
+  const tot1 = sM * 7.5 + sMid * 6.0;
+  if (E1 > 0 && tot1 > 0) {
+    const r1 = E1 / tot1;
+    pM   += 7.5 * r1;
+    pMid += 6.0 * r1;
+  }
+
+  // ── INTERVAL 2: 15:00–16:30 (M=1.5h, Mid=1.5h, N=1.5h) ──
+  // Alert if 16:30 < 15:00 (box decreased)
+  if (h1630 && h1500 && c1630 < c1500) {
+    showAlert(L[lang]['alert-title'], L[lang]['alert-1630-low']);
+  }
+  const E2 = (h1630 && h1500) ? Math.max(0, c1630 - c1500) : 0;
+  const tot2 = (sM + sMid + sN) * 1.5;
+  if (E2 > 0 && tot2 > 0) {
+    const r2 = E2 / tot2;
+    pM   += 1.5 * r2;
+    pMid += 1.5 * r2;
+    pN   += 1.5 * r2;
+  }
+
+  // ── MORNING PAYOUT at 16:30 ──
+  let perM = 0, totalM = 0;
+  let boxAfter1630 = h1500 ? c1500 : 0; // default: whatever was in box at 15:00
+
+  if (h1630) {
+    const rawM = sM > 0 ? Math.floor(pM) : 0;
+    const virtualM = rawM * sM;
+    if (virtualM > c1630) {
+      showAlert(L[lang]['alert-title'], L[lang]['alert-1630-deficit']);
+      totalM = c1630;
+      perM = sM > 0 ? Math.floor(totalM / sM) : 0;
+      totalM = perM * sM;
+      boxAfter1630 = Math.max(0, c1630 - totalM);
+    } else {
+      perM = rawM;
+      totalM = virtualM;
+      boxAfter1630 = Math.max(0, c1630 - totalM);
+    }
+  }
+
+  // ── INTERVAL 3: 16:30–18:00 (Mid=1.5h, N=1.5h) ──
+  let E3 = 0, box1800 = boxAfter1630;
+  if (h1800) {
+    if (c1800 < boxAfter1630) {
+      showAlert(L[lang]['alert-title'], L[lang]['alert-1800-low']);
+      box1800 = boxAfter1630;
+    } else {
+      box1800 = c1800;
+    }
+    E3 = Math.max(0, box1800 - boxAfter1630);
+  }
+  const tot3 = (sMid + sN) * 1.5;
+  if (E3 > 0 && tot3 > 0) {
+    const r3 = E3 / tot3;
+    pMid += 1.5 * r3;
+    pN   += 1.5 * r3;
+  }
+
+  // ── MIDDAY PAYOUT at 18:00 ──
+  let perMid = 0, totalMid = 0;
+  let boxAfter1800 = box1800;
+
+  if (h1800) {
+    const rawMid = sMid > 0 ? Math.floor(pMid) : 0;
+    const virtualMid = rawMid * sMid;
+    if (virtualMid > box1800) {
+      showAlert(L[lang]['alert-title'], L[lang]['alert-1800-low']);
+      totalMid = box1800;
+      perMid = sMid > 0 ? Math.floor(totalMid / sMid) : 0;
+      totalMid = perMid * sMid;
+      boxAfter1800 = Math.max(0, box1800 - totalMid);
+    } else {
+      perMid = rawMid;
+      totalMid = virtualMid;
+      boxAfter1800 = Math.max(0, box1800 - totalMid);
+    }
+  }
+
+  // ── INTERVAL 4: 18:00–00:00 (N=6h, PT=6h) ──
+  let E4 = 0, box0000 = boxAfter1800;
+  if (h0000) {
+    if (c0000 < boxAfter1800) {
+      showAlert(L[lang]['alert-title'], L[lang]['alert-0000-low']);
+      box0000 = boxAfter1800;
+    } else {
+      box0000 = c0000;
+    }
+    E4 = Math.max(0, box0000 - boxAfter1800);
+  }
+  const tot4 = (sN + sPT) * 6.0;
+  if (E4 > 0 && tot4 > 0) {
+    const r4 = E4 / tot4;
+    pN  += 6.0 * r4;
+    pPT += 6.0 * r4;
+  }
+
+  // ── NIGHT + PT PAYOUT at 00:00 ──
+  let perN = 0, totalN = 0, perPT = 0, totalPT = 0;
+  if (h0000) {
+    const rawN  = sN  > 0 ? Math.floor(pN)  : 0;
+    const rawPT = sPT > 0 ? Math.floor(pPT) : 0;
+    const combined = rawN * sN + rawPT * sPT;
+
+    if (combined > box0000) {
+      showAlert(L[lang]['alert-title'], L[lang]['alert-0000-low']);
+      // Distribute proportionally within constraint
+      const total = sN + sPT;
+      const perAll = total > 0 ? Math.floor(box0000 / total) : 0;
+      perN  = perAll; totalN  = perN  * sN;
+      perPT = perAll; totalPT = perPT * sPT;
+    } else {
+      perN  = rawN;  totalN  = rawN  * sN;
+      perPT = rawPT; totalPT = rawPT * sPT;
+    }
+  }
+
+  // ── LEFTOVER ──
+  let leftover = 0;
+  if (h0000)      leftover = Math.max(0, box0000 - totalN - totalPT);
+  else if (h1800) leftover = boxAfter1800;
+  else if (h1630) leftover = boxAfter1630;
+  else if (h1500) leftover = c1500;
+
+  // totalEarned = all money distributed + leftover (true total that passed through the box today)
+  const totalEarned = totalM + totalMid + totalN + totalPT + leftover;
+
+  // ── WRITE TO DOM ──
+  const fmt = n => '฿' + n.toLocaleString('th-TH');
+  document.getElementById('res-m').textContent       = fmt(perM);
+  document.getElementById('res-total-m').textContent = fmt(totalM);
+  document.getElementById('res-mid').textContent     = fmt(perMid);
+  document.getElementById('res-total-mid').textContent = fmt(totalMid);
+  document.getElementById('res-n').textContent       = fmt(perN);
+  document.getElementById('res-total-n').textContent = fmt(totalN);
+  document.getElementById('res-pt').textContent      = fmt(perPT);
+  document.getElementById('res-total-pt').textContent= fmt(totalPT);
+  document.getElementById('stat-total').textContent  = fmt(totalEarned);
+  document.getElementById('stat-leftover').textContent = fmt(leftover);
+}
+
+// ── ALERT HELPERS ──────────────────────────────────────────────────────────
+function showAlert(title, desc) {
+  const box = document.getElementById('alert-box');
+  document.getElementById('alert-title').textContent = title;
+  document.getElementById('alert-desc').textContent  = desc;
+  box.classList.add('show');
+}
+function hideAlert() {
+  document.getElementById('alert-box').classList.remove('show');
+}
+
+// ── CLEAR CASH ─────────────────────────────────────────────────────────────
+function clearCash() {
+  ['1500','1630','1800','0000'].forEach(id => {
+    document.getElementById('input-' + id).value = '';
+  });
+  // Unlock all locks
+  ['m','mid','n'].forEach(shift => {
+    if (locks[shift]) toggleLock(shift);
+  });
+  recalc();
+  toast(L[lang]['toast-cleared']);
+}
+
+// ── SAVE TODAY ─────────────────────────────────────────────────────────────
+function saveToday() {
+  const total = parseInt(document.getElementById('stat-total').textContent.replace(/[^\d]/g,'')) || 0;
+  if (!total) { toast(L[lang]['toast-save-error']); return; }
+
+  const rec = {
+    date: new Date().toLocaleDateString(lang === 'th' ? 'th-TH' : 'en-GB', {day:'2-digit',month:'2-digit',year:'2-digit'}),
+    total,
+    m:   document.getElementById('res-m').textContent,
+    mid: document.getElementById('res-mid').textContent,
+    n:   document.getElementById('res-n').textContent,
+    pt:  document.getElementById('res-pt').textContent
+  };
+  const recs = JSON.parse(localStorage.getItem('tip_history') || '[]');
+  recs.unshift(rec);
+  localStorage.setItem('tip_history', JSON.stringify(recs));
+  renderHistory();
+  toast(L[lang]['toast-saved']);
+}
+
+// ── HISTORY ────────────────────────────────────────────────────────────────
+function renderHistory() {
+  const recs = JSON.parse(localStorage.getItem('tip_history') || '[]');
+  const tbody = document.getElementById('hist-body');
+  if (!recs.length) {
+    tbody.innerHTML = `<tr><td colspan="6" class="history-empty">${L[lang]['history-empty']}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = recs.map(r => `
+    <tr>
+      <td style="color:var(--text);font-weight:600">${r.date}</td>
+      <td style="color:var(--indigo);font-weight:700">฿${r.total.toLocaleString('th-TH')}</td>
+      <td style="color:var(--emerald);font-weight:600">${r.m}</td>
+      <td style="color:var(--blue);font-weight:600">${r.mid}</td>
+      <td style="color:var(--purple);font-weight:600">${r.n}</td>
+      <td style="color:var(--orange);font-weight:600">${r.pt}</td>
+    </tr>`).join('');
+}
+
+function confirmClear() { document.getElementById('modal').classList.add('show'); }
+function closeModal()   { document.getElementById('modal').classList.remove('show'); }
+function doClearHistory() {
+  localStorage.removeItem('tip_history');
+  renderHistory(); closeModal();
+  toast(L[lang]['toast-hist-cleared']);
+}
+
+// ── EXPORT CSV ─────────────────────────────────────────────────────────────
+function exportCSV() {
+  const recs = JSON.parse(localStorage.getItem('tip_history') || '[]');
+  if (!recs.length) { toast(L[lang]['toast-no-hist']); return; }
+
+  const isEn = lang === 'en';
+  const headers = isEn
+    ? ['Date','Total Tips (฿)','Morning/person (฿)','Midday/person (฿)','Afternoon/person (฿)','Part-Time/person (฿)']
+    : ['วันที่','รวมทิป (฿)','กะเช้า/คน (฿)','กะกลางวัน/คน (฿)','กะบ่าย/คน (฿)','พาร์ทไทม์/คน (฿)'];
+
+  // Strip ฿ and comma from stored values for clean numbers in CSV
+  const clean = v => String(v).replace(/[฿,]/g, '');
+
+  const rows = recs.map(r => [
+    r.date,
+    r.total,
+    clean(r.m),
+    clean(r.mid),
+    clean(r.n),
+    clean(r.pt)
+  ]);
+
+  const csvContent = [headers, ...rows]
+    .map(row => row.map(cell => `"${cell}"`).join(','))
+    .join('\r\n');
+
+  // BOM for Excel to read Thai correctly
+  const bom = '\uFEFF';
+  const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+
+  const today = new Date().toISOString().slice(0, 10);
+  const filename = `tip-splitter-${today}.csv`;
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  toast(L[lang]['toast-exported']);
+}
+
+// ── TOAST ──────────────────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  document.getElementById('toast-text').textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  loadTheme();
+  loadStaff();
+  recalc();
+  renderHistory();
+});
+</script>
+</body>
+</html>
